@@ -1,14 +1,16 @@
-class AdminPanel {
+class RestaurantAdminPanel {
     constructor() {
         this.loginSection = document.getElementById('login-section');
         this.adminContent = document.getElementById('admin-content');
         this.loginForm = document.getElementById('login-form');
         this.logoutBtn = document.getElementById('logout-btn');
-        this.mealForm = document.getElementById('meal-form');
-        this.mealsList = document.getElementById('meals-list');
+        this.restaurantForm = document.getElementById('restaurant-form');
+        this.restaurantsList = document.getElementById('restaurants-list');
+        this.filterCategory = document.getElementById('filter-category');
         this.editModal = document.getElementById('edit-modal');
-        this.editForm = document.getElementById('edit-meal-form');
+        this.editForm = document.getElementById('edit-restaurant-form');
         
+        this.restaurants = [];
         this.init();
     }
 
@@ -16,7 +18,7 @@ class AdminPanel {
         await this.checkAuthStatus();
         this.setupEventListeners();
         if (this.isAuthenticated) {
-            await this.loadMeals();
+            await this.loadRestaurants();
         }
     }
 
@@ -27,11 +29,14 @@ class AdminPanel {
         // Logout button
         this.logoutBtn.addEventListener('click', () => this.handleLogout());
         
-        // Meal form
-        this.mealForm.addEventListener('submit', (e) => this.handleAddMeal(e));
+        // Restaurant form
+        this.restaurantForm.addEventListener('submit', (e) => this.handleAddRestaurant(e));
+        
+        // Filter
+        this.filterCategory.addEventListener('change', () => this.filterRestaurants());
         
         // Edit modal
-        this.editForm.addEventListener('submit', (e) => this.handleEditMeal(e));
+        this.editForm.addEventListener('submit', (e) => this.handleEditRestaurant(e));
         
         // Modal close events
         const closeBtn = this.editModal.querySelector('.close');
@@ -89,7 +94,7 @@ class AdminPanel {
             if (response.ok) {
                 this.isAuthenticated = true;
                 this.showAdminContent();
-                await this.loadMeals();
+                await this.loadRestaurants();
                 this.clearLoginError();
             } else {
                 this.showLoginError(data.error || 'Login failed');
@@ -110,159 +115,185 @@ class AdminPanel {
         }
     }
 
-    async handleAddMeal(e) {
+    async handleAddRestaurant(e) {
         e.preventDefault();
         
-        const formData = new FormData(this.mealForm);
-        const mealData = {
+        const formData = new FormData(this.restaurantForm);
+        const restaurantData = {
             name: formData.get('name').trim(),
-            ingredients: formData.get('ingredients').trim()
+            category: formData.get('category'),
+            details: formData.get('details').trim()
         };
         
-        if (!mealData.name || !mealData.ingredients) {
-            this.showMealFormMessage('Please fill in all fields', 'error');
+        if (!restaurantData.name || !restaurantData.category || !restaurantData.details) {
+            this.showRestaurantFormMessage('Please fill in all fields', 'error');
             return;
         }
         
         try {
-            const response = await fetch('/api/meals', {
+            const response = await fetch('/api/restaurants', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(mealData)
+                body: JSON.stringify(restaurantData)
             });
             
             const data = await response.json();
             
             if (response.ok) {
-                this.showMealFormMessage('Meal added successfully!', 'success');
-                this.mealForm.reset();
-                await this.loadMeals();
+                this.showRestaurantFormMessage('Restaurant added successfully!', 'success');
+                this.restaurantForm.reset();
+                await this.loadRestaurants();
             } else {
-                this.showMealFormMessage(data.error || 'Failed to add meal', 'error');
+                this.showRestaurantFormMessage(data.error || 'Failed to add restaurant', 'error');
             }
         } catch (error) {
-            console.error('Error adding meal:', error);
-            this.showMealFormMessage('Network error. Please try again.', 'error');
+            console.error('Error adding restaurant:', error);
+            this.showRestaurantFormMessage('Network error. Please try again.', 'error');
         }
     }
 
-    async handleEditMeal(e) {
+    async handleEditRestaurant(e) {
         e.preventDefault();
         
-        const mealId = document.getElementById('edit-meal-id').value;
-        const name = document.getElementById('edit-meal-name').value.trim();
-        const ingredients = document.getElementById('edit-meal-ingredients').value.trim();
+        const restaurantId = document.getElementById('edit-restaurant-id').value;
+        const name = document.getElementById('edit-restaurant-name').value.trim();
+        const category = document.getElementById('edit-restaurant-category').value;
+        const details = document.getElementById('edit-restaurant-details').value.trim();
         
-        if (!name || !ingredients) {
+        if (!name || !category || !details) {
             alert('Please fill in all fields');
             return;
         }
         
         try {
-            const response = await fetch(`/api/meals/${mealId}`, {
+            const response = await fetch(`/api/restaurants/${restaurantId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name, ingredients })
+                body: JSON.stringify({ name, category, details })
             });
             
             const data = await response.json();
             
             if (response.ok) {
                 this.closeModal();
-                await this.loadMeals();
-                this.showMealFormMessage('Meal updated successfully!', 'success');
+                await this.loadRestaurants();
+                this.showRestaurantFormMessage('Restaurant updated successfully!', 'success');
             } else {
-                alert(data.error || 'Failed to update meal');
+                alert(data.error || 'Failed to update restaurant');
             }
         } catch (error) {
-            console.error('Error updating meal:', error);
+            console.error('Error updating restaurant:', error);
             alert('Network error. Please try again.');
         }
     }
 
-    async deleteMeal(mealId, mealName) {
-        if (!confirm(`Are you sure you want to delete "${mealName}"?`)) {
+    async deleteRestaurant(restaurantId, restaurantName) {
+        if (!confirm(`Are you sure you want to delete "${restaurantName}"?`)) {
             return;
         }
         
         try {
-            const response = await fetch(`/api/meals/${mealId}`, {
+            const response = await fetch(`/api/restaurants/${restaurantId}`, {
                 method: 'DELETE'
             });
             
             const data = await response.json();
             
             if (response.ok) {
-                await this.loadMeals();
-                this.showMealFormMessage('Meal deleted successfully!', 'success');
+                await this.loadRestaurants();
+                this.showRestaurantFormMessage('Restaurant deleted successfully!', 'success');
             } else {
-                alert(data.error || 'Failed to delete meal');
+                alert(data.error || 'Failed to delete restaurant');
             }
         } catch (error) {
-            console.error('Error deleting meal:', error);
+            console.error('Error deleting restaurant:', error);
             alert('Network error. Please try again.');
         }
     }
 
-    async loadMeals() {
+    async loadRestaurants() {
         try {
-            const response = await fetch('/api/meals');
+            const response = await fetch('/api/restaurants');
             
             if (response.ok) {
-                const meals = await response.json();
-                this.displayMeals(meals);
+                this.restaurants = await response.json();
+                this.filterRestaurants();
             } else {
-                console.error('Failed to load meals');
+                console.error('Failed to load restaurants');
             }
         } catch (error) {
-            console.error('Error loading meals:', error);
+            console.error('Error loading restaurants:', error);
         }
     }
 
-    displayMeals(meals) {
-        if (meals.length === 0) {
-            this.mealsList.innerHTML = `
-                <div class="no-meals">
-                    <p>No meals added yet. Add your first meal using the form above!</p>
+    filterRestaurants() {
+        const selectedCategory = this.filterCategory.value;
+        let filteredRestaurants = this.restaurants;
+        
+        if (selectedCategory !== 'all') {
+            filteredRestaurants = this.restaurants.filter(restaurant => 
+                restaurant.category === selectedCategory
+            );
+        }
+        
+        this.displayRestaurants(filteredRestaurants);
+    }
+
+    displayRestaurants(restaurants) {
+        if (restaurants.length === 0) {
+            this.restaurantsList.innerHTML = `
+                <div class="no-restaurants">
+                    <p>No restaurants found. Add your first restaurant using the form above!</p>
                 </div>
             `;
             return;
         }
 
-        const mealsHTML = meals.map(meal => `
-            <div class="meal-item" data-meal-id="${meal.id}">
-                <div class="meal-info">
-                    <h4>${this.escapeHtml(meal.name)}</h4>
-                    <p><strong>Ingredients:</strong> ${this.escapeHtml(meal.ingredients)}</p>
+        const restaurantsHTML = restaurants.map(restaurant => `
+            <div class="restaurant-item ${restaurant.category}" data-restaurant-id="${restaurant.id}">
+                <div class="restaurant-info">
+                    <h4>${this.escapeHtml(restaurant.name)}</h4>
+                    <div class="restaurant-category ${restaurant.category}">${this.getCategoryDisplayName(restaurant.category)}</div>
+                    <p><strong>Details:</strong> ${this.escapeHtml(restaurant.details)}</p>
                 </div>
-                <div class="meal-actions">
-                    <button class="edit-btn" onclick="adminPanel.openEditModal(${meal.id}, '${this.escapeForAttribute(meal.name)}', '${this.escapeForAttribute(meal.ingredients)}')">
+                <div class="restaurant-actions">
+                    <button class="edit-btn" onclick="restaurantAdminPanel.openEditModal(${restaurant.id}, '${this.escapeForAttribute(restaurant.name)}', '${restaurant.category}', '${this.escapeForAttribute(restaurant.details)}')">
                         Edit
                     </button>
-                    <button class="delete-btn" onclick="adminPanel.deleteMeal(${meal.id}, '${this.escapeForAttribute(meal.name)}')">
+                    <button class="delete-btn" onclick="restaurantAdminPanel.deleteRestaurant(${restaurant.id}, '${this.escapeForAttribute(restaurant.name)}')">
                         Delete
                     </button>
                 </div>
             </div>
         `).join('');
 
-        this.mealsList.innerHTML = mealsHTML;
+        this.restaurantsList.innerHTML = restaurantsHTML;
     }
 
-    openEditModal(mealId, mealName, mealIngredients) {
-        document.getElementById('edit-meal-id').value = mealId;
-        document.getElementById('edit-meal-name').value = mealName;
-        document.getElementById('edit-meal-ingredients').value = mealIngredients;
+    openEditModal(restaurantId, restaurantName, restaurantCategory, restaurantDetails) {
+        document.getElementById('edit-restaurant-id').value = restaurantId;
+        document.getElementById('edit-restaurant-name').value = restaurantName;
+        document.getElementById('edit-restaurant-category').value = restaurantCategory;
+        document.getElementById('edit-restaurant-details').value = restaurantDetails;
         this.editModal.style.display = 'block';
     }
 
     closeModal() {
         this.editModal.style.display = 'none';
         this.editForm.reset();
+    }
+
+    getCategoryDisplayName(category) {
+        const categoryMap = {
+            'formal': 'Formal Dining',
+            'sit-down': 'Sit Down',
+            'quick-service': 'Quick Service'
+        };
+        return categoryMap[category] || category;
     }
 
     showLoginForm() {
@@ -288,8 +319,8 @@ class AdminPanel {
         errorDiv.style.display = 'none';
     }
 
-    showMealFormMessage(message, type) {
-        const messageDiv = document.getElementById('meal-form-message');
+    showRestaurantFormMessage(message, type) {
+        const messageDiv = document.getElementById('restaurant-form-message');
         messageDiv.textContent = message;
         messageDiv.className = `message ${type}`;
         messageDiv.style.display = 'block';
@@ -312,9 +343,9 @@ class AdminPanel {
 }
 
 // Global variable for access from inline event handlers
-let adminPanel;
+let restaurantAdminPanel;
 
-// Initialize the admin panel when the page loads
+// Initialize the restaurant admin panel when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    adminPanel = new AdminPanel();
+    restaurantAdminPanel = new RestaurantAdminPanel();
 });

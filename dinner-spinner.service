@@ -1,0 +1,21 @@
+[Unit]
+Description=Family Decision Spinner Web Application
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+User=mills
+Group=mills
+ExecStart=/usr/bin/node /home/mills/dinner-spinner/server.js
+WorkingDirectory=/home/mills/dinner-spinner
+Environment=NODE_ENV=production
+Environment=PORT=3000
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dinner-spinner
+
+[Install]
+WantedBy=multi-user.target

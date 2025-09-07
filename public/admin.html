@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Dinner Spinner</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Admin Panel</h1>
+            <div class="header-actions">
+                <a href="/" class="back-link">← Back to Spinner</a>
+                <button id="logout-btn" class="logout-button" style="display: none;">Logout</button>
+            </div>
+        </header>
+
+        <!-- Login Form -->
+        <div id="login-section" class="login-section">
+            <div class="login-form">
+                <h2>Login Required</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+                <div id="login-error" class="error-message"></div>
+                <div class="login-help">
+                    <p><strong>Default credentials:</strong></p>
+                    <p>Username: admin</p>
+                    <p>Password: admin123</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Content -->
+        <main id="admin-content" style="display: none;">
+            <div class="admin-sections">
+                <!-- Add New Meal Section -->
+                <section class="admin-section">
+                    <h2>Add New Meal</h2>
+                    <form id="meal-form" class="meal-form">
+                        <div class="form-group">
+                            <label for="meal-name">Meal Name:</label>
+                            <input type="text" id="meal-name" name="name" required placeholder="e.g., Spaghetti Bolognese">
+                        </div>
+                        <div class="form-group">
+                            <label for="meal-ingredients">Ingredients:</label>
+                            <textarea id="meal-ingredients" name="ingredients" required 
+                                placeholder="e.g., Ground beef, pasta, tomato sauce, onions, garlic"></textarea>
+                        </div>
+                        <button type="submit">Add Meal</button>
+                    </form>
+                    <div id="meal-form-message" class="message"></div>
+                </section>
+
+                <!-- Existing Meals Section -->
+                <section class="admin-section">
+                    <h2>Existing Meals</h2>
+                    <div class="meals-container">
+                        <div id="meals-list" class="meals-list">
+                            <!-- Meals will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <p>Admin Panel - Manage your family meals</p>
+        </footer>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Meal</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="edit-meal-form">
+                <input type="hidden" id="edit-meal-id">
+                <div class="form-group">
+                    <label for="edit-meal-name">Meal Name:</label>
+                    <input type="text" id="edit-meal-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-meal-ingredients">Ingredients:</label>
+                    <textarea id="edit-meal-ingredients" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit">Update Meal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

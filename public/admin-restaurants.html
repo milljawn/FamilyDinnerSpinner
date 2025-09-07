@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Admin Panel</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍕 Restaurant Admin Panel</h1>
+            <div class="header-actions">
+                <a href="/" class="back-link">← Back to Home</a>
+                <a href="/restaurants" class="back-link">← Back to Restaurant Wheel</a>
+                <button id="logout-btn" class="logout-button" style="display: none;">Logout</button>
+            </div>
+        </header>
+
+        <!-- Login Form -->
+        <div id="login-section" class="login-section">
+            <div class="login-form">
+                <h2>Login Required</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+                <div id="login-error" class="error-message"></div>
+                <div class="login-help">
+                    <p><strong>Default credentials:</strong></p>
+                    <p>Username: admin</p>
+                    <p>Password: admin123</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Content -->
+        <main id="admin-content" style="display: none;">
+            <div class="admin-sections">
+                <!-- Add New Restaurant Section -->
+                <section class="admin-section">
+                    <h2>Add New Restaurant</h2>
+                    <form id="restaurant-form" class="restaurant-form">
+                        <div class="form-group">
+                            <label for="restaurant-name">Restaurant Name:</label>
+                            <input type="text" id="restaurant-name" name="name" required placeholder="e.g., Tony's Italian Bistro">
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-category">Category:</label>
+                            <select id="restaurant-category" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="formal">Formal Dining</option>
+                                <option value="sit-down">Sit Down</option>
+                                <option value="quick-service">Quick Service</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-details">Details (cuisine, location, notes):</label>
+                            <textarea id="restaurant-details" name="details" required 
+                                placeholder="e.g., Italian cuisine, downtown location, reservations recommended"></textarea>
+                        </div>
+                        <button type="submit">Add Restaurant</button>
+                    </form>
+                    <div id="restaurant-form-message" class="message"></div>
+                </section>
+
+                <!-- Existing Restaurants Section -->
+                <section class="admin-section">
+                    <h2>Existing Restaurants</h2>
+                    <div class="filter-section">
+                        <label for="filter-category">Filter by Category:</label>
+                        <select id="filter-category">
+                            <option value="all">All Categories</option>
+                            <option value="formal">Formal Dining</option>
+                            <option value="sit-down">Sit Down</option>
+                            <option value="quick-service">Quick Service</option>
+                        </select>
+                    </div>
+                    <div class="restaurants-container">
+                        <div id="restaurants-list" class="restaurants-list">
+                            <!-- Restaurants will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <p>Restaurant Admin Panel - Manage your dining options</p>
+        </footer>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Restaurant</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="edit-restaurant-form">
+                <input type="hidden" id="edit-restaurant-id">
+                <div class="form-group">
+                    <label for="edit-restaurant-name">Restaurant Name:</label>
+                    <input type="text" id="edit-restaurant-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-restaurant-category">Category:</label>
+                    <select id="edit-restaurant-category" required>
+                        <option value="formal">Formal Dining</option>
+                        <option value="sit-down">Sit Down</option>
+                        <option value="quick-service">Quick Service</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-restaurant-details">Details:</label>
+                    <textarea id="edit-restaurant-details" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit">Update Restaurant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/restaurant-admin.js"></script>
+
+    <style>
+        .restaurant-form {
+            max-width: 600px;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .filter-section label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .filter-section select {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .restaurants-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .restaurant-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: transform 0.3s ease;
+            border-left: 5px solid #28a745;
+        }
+
+        .restaurant-item.formal {
+            border-left-color: #6f42c1;
+        }
+
+        .restaurant-item.sit-down {
+            border-left-color: #007bff;
+        }
+
+        .restaurant-item.quick-service {
+            border-left-color: #fd7e14;
+        }
+
+        .restaurant-item:hover {
+            transform: translateX(5px);
+        }
+
+        .restaurant-info h4 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .restaurant-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .restaurant-category.formal {
+            background: #e7e3ff;
+            color: #6f42c1;
+        }
+
+        .restaurant-category.sit-down {
+            background: #cce7ff;
+            color: #007bff;
+        }
+
+        .restaurant-category.quick-service {
+            background: #ffe4cc;
+            color: #fd7e14;
+        }
+
+        .restaurant-info p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .restaurant-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+    </style>
+</body>
+</html>

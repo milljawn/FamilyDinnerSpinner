@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Dinner Spinner</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍽️ Family Dinner Spinner</h1>
+            <a href="/admin" class="admin-link">Admin Panel</a>
+        </header>
+
+        <main>
+            <div class="spinner-section">
+                <div class="spinner-container">
+                    <svg class="spinner" width="300" height="300" viewBox="0 0 300 300">
+                        <circle cx="150" cy="150" r="140" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+                        <g class="spinner-segments" transform="translate(150,150)">
+                            <!-- Segments will be populated by JavaScript -->
+                        </g>
+                        <circle cx="150" cy="150" r="15" fill="#6c757d"/>
+                        <polygon points="150,10 160,30 140,30" fill="#dc3545" class="spinner-pointer"/>
+                    </svg>
+                </div>
+
+                <div class="controls">
+                    <div class="meal-count-selector">
+                        <label for="meal-count">Number of meals to select:</label>
+                        <select id="meal-count">
+                            <option value="1">1 meal</option>
+                            <option value="2">2 meals</option>
+                            <option value="3">3 meals</option>
+                            <option value="4">4 meals</option>
+                            <option value="5">5 meals</option>
+                        </select>
+                    </div>
+                    
+                    <button id="spin-btn" class="spin-button">
+                        <span>🎯 SPIN!</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div id="results" class="results-container">
+                    <p class="no-results">Click the spin button to select your meals!</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Family Dinner Spinner - Making meal decisions easy!</p>
+        </footer>
+    </div>
+
+    <script src="/js/spinner.js"></script>
+</body>
+</html>

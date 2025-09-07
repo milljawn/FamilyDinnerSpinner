@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Decision Spinner</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .landing-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+        }
+        .landing-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .landing-header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .landing-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+        }
+        .decision-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .decision-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .decision-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        .decision-card h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .decision-card p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .decision-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        .meals-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        .restaurant-button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+        .decision-button:hover {
+            transform: translateY(-3px);
+            color: white;
+        }
+        .admin-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .admin-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .admin-link {
+            color: white;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .admin-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        @media (max-width: 768px) {
+            .landing-header h1 { font-size: 2rem; }
+            .decision-options { grid-template-columns: 1fr; gap: 25px; }
+            .decision-card { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container landing-container">
+        <header class="landing-header">
+            <h1>🎯 Family Decision Spinner</h1>
+            <p class="landing-subtitle">Making decisions easy for the whole family!</p>
+        </header>
+
+        <main>
+            <div class="decision-options">
+                <div class="decision-card">
+                    <div class="card-icon">🍽️</div>
+                    <h2>Dinner Spinner</h2>
+                    <p>Spin the wheel to decide what to cook at home from your family meal collection.</p>
+                    <a href="/meals" class="decision-button meals-button">
+                        <span>Choose Home Cooking</span>
+                        <span>→</span>
+                    </a>
+                </div>
+
+                <div class="decision-card">
+                    <div class="card-icon">🍕</div>
+                    <h2>Restaurant Wheel</h2>
+                    <p>Spin to pick a restaurant for dining out. Filter by restaurant type.</p>
+                    <a href="/restaurants" class="decision-button restaurant-button">
+                        <span>Find a Restaurant</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <div class="admin-links">
+                    <a href="/admin/meals" class="admin-link">🔧 Manage Meals</a>
+                    <a href="/admin/restaurants" class="admin-link">🔧 Manage Restaurants</a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
